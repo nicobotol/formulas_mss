@@ -1,0 +1,805 @@
+% !TeX spellcheck = en_EN
+
+\documentclass[a4paper,12pt]{article}
+\usepackage[a4paper]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{siunitx}
+\usepackage{float}
+\usepackage{pdfpages}
+\usepackage{booktabs} 
+\usepackage{pgfpages}
+
+%for printing two page per face
+\pgfpagesuselayout{2 on 1}[a4paper,landscape] 
+\usepackage[bottom]{footmisc}
+
+\newenvironment{sistema}%
+{\left\lbrace\begin{array}{@{}l@{}}}%
+	{\end{array}\right.}
+
+\title{Mechatronic system simulation}
+
+\begin{document}
+	{ \huge
+		Mechatronic System Simulation}
+	\footnote{Version 1.3 \ \ \ \today}
+	\section{LAPLACE TRANSFORM}
+	Definition:
+	\begin{equation}
+		\lim_{\varepsilon \rightarrow 0^+}\lim_{M \rightarrow \infty }\int_{-\varepsilon}^{M} f(t)e^{st} \ dt = \int_{0^-}^{\infty } f(t)e^{st} \ dt
+	\end{equation}
+
+	The solution of an ODE in the Laplace domain is in the form: $SOL=\frac{P(s)}{Q(s)}$ with usually deg(P(s)) $<$ deg(Q(s)). If this condition is not respected and deg(P(s)) $>$ deg(Q(s)) we could use the polynomial division to transform the solution in the form $SOL=\frac{P(s)}{Q(s)}=\frac{T(s) Q(s) + R(s)}{Q(s)} = T(s) + \frac{R(s)}{Q(s)}$ with deg(R(s)) $<$ deg(Q(s)).\\
+	According to the root of Q(s) are necessary differential strategies to perform the PFE.\\ \\
+	\fbox{ \parbox{\textwidth}{
+			Example of poly division:
+			\begin{gather*}
+				\frac{P(s)}{Q(s)}=\frac{s^4+1}{s^2+1} = (s^2-1) \ (s^2+1)+2
+			\end{gather*}
+			\begin{table}[H]
+				\centering
+				\begin{tabular}{ccccc|c}
+					$s^4$ & 0 & 0 & 0 & 1 & $s^2+0s+1$\\
+					\toprule
+					$s^4$ &  & $s^2$ &  &  & $s^2-1$\\ \midrule
+					&  & $-s^2$ &  & 1 & \\ \midrule
+					&  & $-s^2$ &  & -1 & \\ \midrule
+					&  &  &  & 2 & \\ 
+				\end{tabular}
+	\end{table}}}
+	\subsection{Real single roots}
+	\begin{gather}
+		G(s)=\frac{b_0 +b_1 s+...+b_m s^m}{(s-p_1) (s-p_2)...(s-p_n)} = \frac{\alpha_1}{s-p_1} +\frac{\alpha_2}{s-p_2}+...+\frac{\alpha_n}{s-p_n}
+		\label{Real_single_roots}\\
+		\alpha_i = \lim_{ s \to p_i} (s-p_i) G(s)
+		\label{Real_single_roots_coeff}
+	\end{gather}
+	\fbox{ \parbox{\textwidth}{
+			Example:
+			\begin{gather*}
+				\frac{s}{(s-1)(s+3)(s-4)}=\frac{A}{s-1}+\frac{B}{s+3}+\frac{C}{s-4}\\
+				1) \ \text{Multiply both side for (s-1) and evaluate for s=1: } \\
+				A=\frac{s}{(s+3)(s-4)}=\frac{1}{(1+3)(1-4)}=-\frac{1}{12}\\
+				2) \ \text{Multiply both side for (s+3) and evaluate in s=-3: }\\
+				B=\frac{s}{(s-1)(s-4)}=\frac{-3}{28}\\
+				3) \ \text{Multiply both side for (s-4) and evaluate in s=4: } \\
+				C=\frac{s}{(s-1)(s+3)}=\frac{4}{21}
+	\end{gather*}}}
+	
+	
+	\subsection{Real multiple roots}
+	\begin{gather}
+		G(s)=\frac{b_0 +b_1 s+...+b_m s^m}{(s-p)^n} = \frac{\alpha_1}{s-p} +\frac{\alpha_2}{(s-p)^2}+...+\frac{\alpha_n}{(s-p)^n} 
+		\label{Real_multiple_roots}\\
+		\alpha_{n-k}=\frac{1}{K!} \lim_{ s \to p} \frac{d^k}{d^k s}((s-p)^n G(s))
+		\label{Real_multiple_roots_coeff}
+	\end{gather}
+	
+	\fbox{ \parbox{\textwidth}{
+			Example
+			\begin{gather*}
+				\frac{1+s}{(s-4)^4}=\frac{A}{s-4}+\frac{B}{(s-4)^2}+\frac{C}{(s-4)^3}+\frac{D}{(s-4)^4}\\
+				1) \ \text{Multiply both side for $(s-4)^4$ and evaluate for s=4: }\\
+				1+s = D + (s-4)(SOMETHING) \Rightarrow D=5 \\
+				2) \ \text{Derive both side of 1 ) and evaluate in s=4}\\
+				1 = 3 A (s-4)^2 +2B (s-4) +C \Rightarrow C=1\\
+				3) \ \text{Derive both side of 2 )and evaluate in s=4}\\
+				0 = 6 A (s-4) +B  \Rightarrow B=0\\
+				4) \ \text{Derive both side of 3 )and evaluate in s=4}\\
+				0 = 6 A \Rightarrow A=0
+	\end{gather*}}}
+	\subsection{Single + multiple roots}
+	\fbox{ \parbox{\textwidth}{
+			Example
+			\begin{gather*}
+				\frac{1+s}{(s+1)(s+2)^3}=\frac{A}{s-1}+\frac{B}{s+2}+\frac{C}{(s+2)^2}+\frac{D}{(s+2)^3}\\
+				1) \ \text{Multiply both side for $(s+1)(s+2)^3$ and evaluate for s=1}\\
+				1+s = A (s+2)^3 + (s-1) (SOMETHING); 1+1=A(3)^3 \Rightarrow A=2/27\\
+				2) \ \text{Applying the \textit{deflaction} (Substitute A's value and isolate on left side)} \\
+				\frac{-2s^3-12s^2+3s+11}{27}=(s-1) \left[ B (s+2)^2 +C(s+2) +D \right] \\
+				3) \ \text{Perform the polynomial division} \\
+				\frac{-2s^2-14s-11}{27}=B(s+2)^2+C(s+2)+D \ \ (1)\\
+				4) \ \text{Evaluate (1) in s=-2} \Rightarrow D=1/3\\
+				5) \ \text{Derive (1) and evaluate at s=-2}\\
+				\frac{-4s-14}{27}=2 B (s+2) +C \ \ (2) \Rightarrow C=-2/9\\
+				6) \ \text{Derivate (2) and collect}\\
+				\frac{-4}{27}=2B \Rightarrow B=-2/27\\
+				7) \text{We get}\\
+				\mathcal{L}^{-1} \left\{ \frac{2/27}{s-1}+\frac{-2/27}{s+2}+\frac{-2/9}{(s+2)^2}+\frac{1/3}{(s+2)^3} \right\}=\frac{2}{27} e^t-e^{-2t} \left( \frac{2}{27}-\frac{2}{9} t
+				+\frac{1}{3 \cdot 2}\frac{1}{s^2} \right)
+	\end{gather*}}}
+	
+	\subsection{Complex single roots}
+	\textbf{Method 1} \\
+	Observation: We have $\frac{P(s)}{Q(s)}$. If $\alpha \in \mathbb{C}$ is a root also $\overline{\alpha}$ is it (Q($\alpha$)=Q($\overline{\alpha}$)=0).\\
+	\begin{gather}
+		\frac{P(s)}{Q(s)}= \frac{A}{s-\alpha}+\frac{\overline{A}}{s-\overline{\alpha}}=\frac{s(A+\bar A)-A \bar \alpha - \bar A \alpha}{s^2-s(\alpha + \bar \alpha) + \mid \alpha \mid ^2}
+		\label{Complex_single_roots}\\
+		A=\frac{-i P(\alpha)}{2 Im \{ \alpha \} }
+		\label{Complex_single_roots_coeff}
+	\end{gather}
+	In order to inverse the Laplace transfor we have to trasform (\ref{Complex_single_roots}) to get a polynomial with real coefficients at the denominator (and then to apply the laplace transfor of sin and cos functions).
+	
+	\begin{gather}
+		\frac{s(A+\bar A)-A \bar \alpha - \bar A \alpha}{s^2-s(\alpha + \bar \alpha) + \mid \alpha \mid ^2} = 
+		\frac{s C + ( D \omega -C a)}{(s-a)^2+\omega^2}
+		\label{Complex_single_roots_ver2}\\
+		\text{Match the denominator: } a=Re\{ \alpha \} \ \ \ \omega= Im\{ \alpha \} \\
+		\text{Match the numerator: } C=A + \bar A=2 Re\{ A \} \ \ \ D=\frac{C a - A \bar \alpha - \bar A \alpha}{\omega}
+		\label{Complex_single_roots_coeff_ver2}
+	\end{gather}
+	Once the coefficients are found they could be used in the inverse Laplace trasform, remembering that:
+	\begin{equation}
+		\mathcal{L}^{-1} \left\{ C \frac{s-a}{(s-a)^2+ \omega ^2} + D \frac{ \omega }{(s-a)^2+ \omega ^2} \right\} (t) = C e^{a t} \cos(\omega t) + D e^{a t} \sin(\omega t) 
+		\label{Complex_single_roots_coeff_ver3}
+	\end{equation}
+	\textbf{Method 2} \\
+	Another method is treated the multiple complex roots as single roots. The disadvantage of these method is to have to work with complex numbers.\\
+	For the final transformation the Euler's formulas could be usefull: 
+	\begin{gather}
+		e^{it}=\cos(t)-i\sin(t)
+		\label{Euler_1}\\
+		sin(t)=\frac{e^{it}-e^{-it}}{2i} \ \ \ cos(t)=\frac{e^{it}+e^{-it}}{2}
+		\label{Euler_2}
+	\end{gather}
+	\subsection{Multiple complex roots}
+	\begin{gather}
+		\frac{P(s)}{(s-\alpha)^2 (s- \bar \alpha)^2} = \frac{A}{(s-\alpha)} +\frac{B}{(s-\alpha)^2}+\frac{\bar A}{(s- \bar \alpha)} +\frac{\bar B}{(s- \bar \alpha)^2}
+		\label{Multiple_complex_roots}\\
+		B=\frac{P(\alpha )}{4 Im \left\{\alpha \right \}^2}
+		\label{Multiple_complex_roots_coeff}
+	\end{gather}
+	Multiply both sides of (\ref{Multiple_complex_roots}) for the denominator of the left hand side and collect the known terms:
+	\begin{gather}
+		P(s) - B(s -\bar \alpha)^2 -B(s-\alpha)^2=A(s-\alpha)(s-\bar \alpha)^2+ \bar A (s-\bar \alpha) (s- \alpha)^2
+		\label{Multiple_complex_roots_coeff_ver2}
+	\end{gather}
+	Derive both sides and evaluate it for s=$\alpha$. After the calculation the result is in the form:
+	\begin{gather}
+		A=\frac{NUMBER}{4 Im\left\{\alpha\right\}^2}
+	\end{gather}
+	The part of PFE $\frac{A}{(s-\alpha)}+\frac{\bar A}{(s- \bar \alpha)}$ could be managed as the case of simple root. For the other part we can use the rule of the inverse Laplace trasform:
+	\begin{equation}
+		\mathcal{L}^{-1} \left\{ \frac{C}{(s-z)^{k+1}} + \frac{\bar C}{(s- \bar z)^{k+1}} \right\} (t) = t^k \mathcal{L}^{-1} \left\{ \frac{C}{s-z} + \frac{\bar C}{s- \bar z} \right\} (t) 
+		\label{Multiple_complex_roots_coeff_ver3}
+	\end{equation}
+	\textbf{General case}\\
+	Starting from:
+	\begin{gather}
+		\frac{P(s)}{(s^2-2as+b)^r Q(s)}
+	\end{gather}
+	There are two main possible PFE.\\
+	In the case with r=2: 
+	\begin{gather}
+		- \frac{P(s)}{(s^2-2as+t)^2 Q(s)}= \frac{A'(t)s+B'(t)}{s^2-2as+t}-\frac{A(t)s+B(t)}{(s^2-2as+t)^2}\frac{q(s,t)}{Q(s)} \notag{}\\
+		\text{with:  } q(s,t)=\frac{d q(s,t)}{dt}
+		\label{multiple_conj_1}
+	\end{gather}
+	In case with r=3:
+	\begin{gather}
+		\frac{P(s)}{(s^2-2as+t)^3 Q(s)}=\frac{A(t)s+B(t)}{(s^2-2as+t)^3}-\frac{A'(t)s+B'(t)}{(s^2-2as+t)^2}+\frac{A''(t)s+B''(t)}{2(s^2-2as+t)}+\frac{q_H(s,t)}{2 Q(s)} \notag\\
+		\text{with:  } q_H=\frac{d^2q}{dt^2}
+	\end{gather}
+	To find $q(s,t)$ and $q_H(s,t)$ we could multiply both sides for the denominator of the LHS and evaluate at $s^2=2as-t$. \\
+	Then we have to pass through an auxiliary function to get the coefficients A(t) and B(t):
+	\begin{equation}
+		\frac{P(s)}{(s^2-2as+t) Q(s)}=\frac{A(t)s+B(t)}{s^2-2as+t}+\frac{q(s,t)}{Q(s)}
+	\end{equation}
+	\fbox{ \parbox{\textwidth}{
+			Example
+			\begin{gather*}
+				\frac{s^2+2s+3}{(s^2+2s+2)(s^2+2s+5)}\\
+				1) \ \text{Rewrite the  the transformation of sine and cosine}\\
+				\frac{s^2+2s+3}{(s^2+2s+2)(s^2+2s+5)}=\frac{As+B}{s^2+2s+2}+\frac{Cs+D}{s^2+2s+5}\\
+				2) \ \text{Multiply both side for the denominator of the LHS}\\
+				s^2+2s+3=(As+B)(s^2+2s+5)+(Cs+D)(s^2+2s+2)\\
+				3) \ \text{Performing all the calculations, the coefficients could be matched}\\
+				A=0 \ \ B=\frac{1}{3} \ \ C=0 \ \ \ D=\frac{2}{3}
+				4) \ \text{Now we get}\\
+				\frac{\frac{1}{3}}{s^2+2s+2}+\frac{\frac{2}{3}}{s^2+2s+5} \\
+				5) \ \text{Transform every term of $4)$ as the sum of sine and cosine}\\
+				\frac{\frac{1}{3}}{s^2+2s+2} = \frac{C_1(s-a_1) +  D_1 \omega_1 }{(s-a_1)^2+\omega_1^2}\\
+				\frac{\frac{2}{3}}{s^2+2s+5} = \frac{C_2 (s-a_2) +  D_2 \omega_2 }{(s-a_2)^2+\omega_2^2}\\
+				6) \ \text{Perform the anti-transformation with rules 15 and 16 }			
+	\end{gather*}}}
+	\newpage
+	\section{Function Minimization with KKT conditions}
+	The problem is in the form:
+	\begin{gather*}
+		\text{Minimize} \ \ \ f( \stackrel{-}{x})
+		\label{fun_to_min}\\
+		\text{Subject to} \ \ \ h_{i}(\stackrel{-}{x})=0 \ \ \ and \ \ \ \ g_{j}(\stackrel{-}{x})>0 \ \ \ (i=1,...,m; j=0,...,p)
+	\end{gather*}
+	Steps for the solution:
+	\begin{enumerate}
+		\item Write the Lagrangian function
+		\begin{equation}
+			\mathcal{L}(\stackrel{-}{x},\stackrel{-}{\lambda},\stackrel{-}{\mu}) = f( \stackrel{-}{x})- \sum_{k=1}^{m}\lambda_k h_k(\stackrel{-}{x})- \sum_{k=1}^{p}\mu_k g_k(\stackrel{-}{x})
+		\end{equation}
+		\item Write the non-linear system. The solutions fulfil the \textbf{first order necessary conditions} to be a minimum point: 
+		\begin{equation}
+			\begin{sistema}
+				\nabla_{\stackrel{-}{x}}\mathcal{L}(\stackrel{-}{x})=0\\
+				\mu g(\stackrel{-}{x})=0\\
+				\mu \ge 0\\
+				g_K(\stackrel{-}{x}) \ge 0\\
+				h_K(\stackrel{-}{x})=0
+			\end{sistema}
+		\label{first_necessary}
+		\end{equation}
+		
+		
+		\item Solve the non linear system and get the candidate points:
+		\begin{equation}
+			P_{i}(\stackrel{-}{x},\stackrel{-}{\lambda},\stackrel{-}{\mu}) \ \ \ \text{with} \ \ \ i=1,...,r
+		\end{equation}
+		\item Verify if the constraints are actives, i.e. those for which $g_{i}(P_{j})$=0. If there are not active constrain then the kernel is the identity and we can directly study the lagrangian. Active constraints should be \textit{qualified} so they must be linearly independent (ie the matrix should have maximum rank).
+		\item For the combinations of point-function which satisfy the condition of the previous point calculate the gradient of the constraint 
+		\begin{equation}
+			\nabla_{\stackrel{-}{x}} g_K(P_i)
+		\end{equation}
+		\item Compute the values of $ \ \nabla_{\stackrel{-}{x}} h_K(P_i)$
+		\item Put in a matrix the results of the two previous points
+		\begin{align}
+			H = \begin{bmatrix}
+				\nabla_{\stackrel{-}{x}} g_K(P)\\
+				\nabla_{\stackrel{-}{x}} h_K(P_i)
+			\end{bmatrix}
+		\end{align}
+		\item Calculate
+		\begin{equation}
+			H \ w = 0
+		\end{equation}
+		the system could be not univocally determined and there can be more than one free parameters. The kernel k is a matrix with a number of row equal to the dimension of $\stackrel{-}{x}$ and a number of column equal to the number of free parameters of the solution. In column there are vector who holds to the solution of the system.
+		\item Verify the nature of the point
+		\begin{equation}
+			A=k^T\nabla_{\stackrel{-}{x}}^2\mathcal{L}(P)k
+		\end{equation}
+		Cases:
+		\begin{itemize}
+			\item det(A) $\ge$ 0 is a \textbf{necessary} condition to be a minimum
+			\item det(A) $=$ 0 $\rightarrow$ nothing could be said about P. To solve the problem we can use the $\varepsilon$ trick: if
+			\begin{equation}
+				\lim_{\varepsilon \to 0} \frac{d}{d\varepsilon}det(A+\varepsilon I) > 0
+			\end{equation}
+			then P is a minimum
+			\item det(A) $<$ 0 $\rightarrow$ P is not a minimum
+			\item det(A) $>$ 0 $\rightarrow$ P is a minimum (sufficient condition to be a minimum)\\
+			This condition could be also verified by checking that all the determinants of the principal minors are positive (ie for the Sylvester's theorem).
+		\end{itemize}
+	\end{enumerate}
+	\textbf{REMARK}:
+	\begin{itemize}
+		\item First order necessary conditions: satisfy (\ref{first_necessary}), and have qualified constraints
+		\item Second order necessary condition:   det(A) $\ge$ 0 (Attention to the question's formulation!)
+		\item Second order sufficient condition:   det(A) $>$ 0 (Attention to the question's formulation!)
+	\end{itemize}
+	\fbox{ \parbox{\textwidth}{
+			Example
+			\begin{gather*}
+				\text{minimize} f(x,y,z)=z-yz^2\\
+				\text{subject to: } x=y , \ \ 0 \le y \le 1	\\
+			\end{gather*}
+			\begin{enumerate}
+				\item Rewrite the constraints as equality and inequality with 0
+				\begin{gather*}
+				x=y \Rightarrow h(x,y,z) x-y=0\\
+				0 \le y \Rightarrow g_1(x,y,z) = y \ge 0\\
+				y \le 1 \Rightarrow g_2(x,y,z) = 1-y \ge 0
+				\end{gather*}
+				\item Write the lagrangian
+				\begin{gather*}
+				\mathcal{L} = f(x,y,z)- \lambda (x-y)- \mu_1 (y) -\mu_2 (1-y)
+				\end{gather*}
+				\item Write the nonlinear system		
+			\[
+			\begin{sistema}
+				\frac{d \mathcal{L}}{dx}= -\lambda\\
+				\frac{d \mathcal{L}}{dy}= -z^2+ \lambda - \mu_1 + \mu_2\\
+				\frac{d \mathcal{L}}{dz}= 1- 2 y z\\
+				\mu_1 g_1(x,y,z)=\mu_1 y = 0\\
+				\mu_2 g_2(x,y,z)=\mu_2 (1-y) = 0 \\
+				\mu_1 \ge 0\\
+				\mu_2 \ge 0\\
+				g_1(x,y,z)=y \ge 0\\
+				g_2(x,y,z)=1-y \ge 0\\
+				h(x,y,z) = x-y = 0
+				
+			\end{sistema}
+			\]
+			
+				\item Solve the nonlinear system
+				\begin{gather*}
+				P(x,y,z,\lambda, \mu_1, \mu_2)= \left\{ x=1, y=1, z=1/2, \lambda = 0, \mu_1 = 0, \mu_2 = 1/4 \right\} 
+			\end{gather*}
+				\item Verify if the constraints are active
+				\begin{gather*}
+				g_1(P)=y=1 \ne 0 \Rightarrow \text{It is not an active const. so we drop it}\\
+				g_2(P)=1-y=0 \Rightarrow \text{It is an active const.}
+			\end{gather*}
+				\item Compute  $\nabla g_2(P)$ and $\nabla h(P)$  and put them in a matrix
+						\begin{gather*}
+				\begin{align*}
+					H = \begin{bmatrix}
+						\nabla_{\stackrel{-}{x}} g_2(P)\\
+						\nabla_{\stackrel{-}{x}} h(P)
+					\end{bmatrix} =
+					\begin{bmatrix}
+						0 & -1 & 0\\
+						1 & -1 & 0
+					\end{bmatrix}
+				\end{align*}
+			\end{gather*}
+	\end{enumerate}
+	}}
+	\fbox{ \parbox{\textwidth}{
+			\begin{enumerate}\setcounter{enumi}{6}
+				\item Find the kernel
+				\begin{gather*}
+				\begin{align*}
+					H v =
+					\begin{bmatrix}
+						0 & -1 & 0\\
+						1 & -1 & 0
+					\end{bmatrix} 
+					\begin{bmatrix}
+						\alpha \\
+						\beta \\
+						\gamma
+					\end{bmatrix} = 0 \\
+					k=
+					\begin{bmatrix}
+						0 \\
+						0 \\
+						1
+					\end{bmatrix} 
+				\end{align*}
+			\end{gather*}
+				\item Write the hessian of the active constraint
+				\begin{gather*}
+				\nabla ^2 \mathcal{L}(P)=	\begin{bmatrix}
+					0 & 0 &  0\\
+					0 &  0 & -2z\\
+					0 & -2z & -2y \\
+				\end{bmatrix}=
+				\begin{bmatrix}
+					0 & 0 &  0\\
+					0 &  0 & -1\\
+					0 &-1 & -2 \\
+				\end{bmatrix}\\
+				\text{Compute }\\
+				A=k^T\nabla_{\stackrel{-}{x}}^2\mathcal{L}(P)k=-2 \Rightarrow \text{P is not a minimum}
+			\end{gather*}
+		\end{enumerate}
+	}}
+	\fbox{ \parbox{\textwidth}{
+			Example of Sylvester's theorem:
+			\begin{gather*}
+				A=k^T\nabla_{\stackrel{-}{x}}^2\mathcal{L}(P)k =  
+				\begin{bmatrix}
+					0 & 0 &  0\\
+					0 &  2 & 0\\
+					0 & 0 & 0 \\
+				\end{bmatrix}
+			\end{gather*}
+			Since $det(A)=0$, then we could not say anything about the nature of the candidate point. We apply the $\varepsilon$ trick\\
+			\begin{equation*}
+				\begin{bmatrix}
+					\centering
+					\varepsilon & 0 & 0 \\
+					0 & 2+\varepsilon & 0\\
+					0 & 0 &\varepsilon
+				\end{bmatrix}
+			\end{equation*}
+			P is a minimum point if all the determinants of the principal minors have $\lim_{\varepsilon \to 0} \frac{d}{d\varepsilon}det(A+\varepsilon I) > 0$
+			\begin{gather*}
+				det(A\left[ 1 \text{x} 1 \right] )	= det(\varepsilon)=\varepsilon \rightarrow  \lim_{\varepsilon \to 0} \frac{d}{d\varepsilon} \varepsilon = 1 > 0 \Rightarrow OK \\
+				det(A\left[ 2 \text{x} 2 \right] )	= 2 \varepsilon + \varepsilon^2 \rightarrow  \lim_{\varepsilon \to 0} \frac{d}{d\varepsilon} 2 \varepsilon + \varepsilon^2 =\lim_{\varepsilon \to 0} 2 + 2 \varepsilon  > 0 \Rightarrow OK\\
+				det(A\left[ 3 \text{x} 3 \right] )	= 2 \varepsilon^2 + \varepsilon^3 \rightarrow  \lim_{\varepsilon \to 0} \frac{d}{d\varepsilon} 2 \varepsilon^2 + \varepsilon^3 =\lim_{\varepsilon \to 0} 4 \varepsilon +3 \varepsilon^2 \rightarrow \\
+				\rightarrow  \lim_{\varepsilon \to 0} \frac{d}{d\varepsilon} 4 \varepsilon +3 \varepsilon^2 = \lim_{\varepsilon \to 0}4+6\varepsilon > 0 \Rightarrow OK
+			\end{gather*}
+			So the candidate point is a minimum
+	}}
+	\newpage
+	\section{Functional Minimization}
+
+	minimize F(x,y,z)=$\phi \left( x(a),y(a),z(a),x(b),y(b),z(b) \right)+\int_a^b L(x,y,z,x',y',z',t)dt$
+	\begin{gather}
+		\text{subject to} \  b_k \left( x(a),y(a),z(a),x(b),y(b),z(b) \right) = 0 \text{ with } k=1,...,m \notag\\
+		\ \ \ \ \psi_j\left( x(a),y(a),z(a),x(b),y(b),z(b) \right)+\int_a^b G_j \left( x,y,z,x',y',z',t \right)dt  = 0 \text{ with } j=1,...,p \\
+		\text{Introducing} \notag \\
+		B\left( x_a,y_a,z_a,x_b,y_b,z_b,\mu_k \right) = \phi \left( x_a,y_a,z_a,x_b,y_b,z_b,\mu_k \right) - \sum_{k=1}^{m} \mu_k b_k\left( x_a,y_a,z_a,x_b,y_b,z_b,\mu_k \right)+ \notag\\
+		-\sum_{k=1}^{m} \lambda_j \psi_j\left( x(a),y(a),z(a),x(b),y(b),z(b) \right)\\
+		H(x,y,z,x',y',z',\lambda, t)=L(x,y,z,x',y',z',\lambda, t)-\sum_{j=1}^{p}\lambda_j G_j(x,y,z,x',y',z',t)
+	\end{gather}
+\subsection{Solution with the calculus of the variations}
+\fbox{ \parbox{\textwidth}{
+		Example of the use of the variations:\\
+		\begin{align*}
+			\text{minimize} \ \ \ \ \ \  \mathcal {F}(x)=x(0)+\displaystyle \int _0^1 x^2+(x^\prime -t)^2\;\mathrm {d}t\\
+			\text{subject to: } \displaystyle \int _0^1 x\;\mathrm {d}t=0\\
+			 x(1)=2
+		\end{align*}
+		Write the lagrangian
+		\begin{gather*}
+			\mathcal {L}(x,\lambda )=\mathcal {F}(x)-\lambda \displaystyle \int _0^1 x\;\mathrm {d}t - \mu \,(x(1)-2)=\\
+			= x(0)+\displaystyle \int _0^1 x^2+(x^\prime -t)^2\;\mathrm {d}t -\lambda \displaystyle \int _0^1 x\;\mathrm {d}t - \mu \,(x(1)-2)
+		\end{gather*}
+	Perform the variation:
+	\begin{gather*}
+		\delta (x(0)) + \int_{0}^{1} 2x \delta(x) +2(x'-t) \delta(x')  \ dt - \delta(\lambda)\int_{0}^{1}x \ dt -\lambda \int_{0}^{1} \delta (x) \ dt - \\ 
+		+\delta (\mu) \left( x(1) -2 \right) -\mu \delta (x(1))
+	\end{gather*}
+    Since there is $\delta(x')$ we have to remove it by applying the \textit{integration by part}:
+    \begin{gather*}
+    	\frac{d \left( \ 2(x'-t) \delta(x) \ \right)}{dt}= 2(x''-1)\delta(x)+2(x'-t)\delta(x') \ ; \\
+    	2(x'-t)\delta(x')=\frac{d \left( \ 2(x'-t) \delta(x) \ \right)}{dt}-2(x''-1)\delta(x)
+    \end{gather*}
+Then we could substitute in the first equation
+\begin{gather*}
+	\delta (x(0)) + \int_{0}^{1} 2x \delta(x) +\frac{d \left( \ 2(x'-t) \delta(x) \ \right)}{dt}-2(x''-1)\delta(x)  \ dt + \\ 
+	- \delta(\lambda)\int_{0}^{1}x \ dt -\lambda \int_{0}^{1} \delta (x) \ dt - \delta (\mu) \left( x(1) -2 \right) -\mu \delta (x(1))
+\end{gather*}
+Performing the integration
+\begin{gather*}
+	\delta (x(0)) + \int_{0}^{1} 2x \delta(x)-2(x''-1)\delta(x)  \ dt +\left[ \left( \ 2(x'-t) \delta(x) \ \right) \right] |_0^1 \\ 
+	- \delta(\lambda)\int_{0}^{1}x \ dt -\lambda \int_{0}^{1} \delta (x) \ dt - \delta (\mu) \left( x(1) -2 \right) -\mu \delta (x(1))
+\end{gather*}
+}}
+
+\subsection{Solution with direct writing of the BVP}
+	After all the computations, the stationary point (and so the required solution od the exercise) are between the solution of the following system:
+	\begin{equation}
+	\begin{sistema}
+		\text{Euler Lagrange equations:}\\
+		\frac{dH}{dx}-\frac{d}{dt}\left(\frac{dH}{dx'}\right)=0\\
+		\frac{dH}{dy}-\frac{d}{dt}\left(\frac{dH}{dy'}\right)=0\\
+		\frac{dH}{dz}-\frac{d}{dt}\left(\frac{dH}{dz'}\right)=0\\ \\
+		\text{Original boundary conditions:}\\
+		b_k \left( x(a),y(a),z(a),x(b),y(b),z(b) \right) = 0\\ \\
+		\text{Original Integral constraints:}\\
+		\psi_j\left( x(a),y(a),z(a),x(b),y(b),z(b) \right)+\int_a^b G_j \left( x,y,z,x',y',z',t \right)dt  = 0\\ \\
+		\text{Additional transversal BC}\\
+		\frac{dB}{dx_a}-\frac{dH}{dx'}|_a=0 \ \ \frac{dB}{dy_a}-\frac{dH}{dy'}|_a=0 \ \ \ \frac{dB}{dz_a}-\frac{dH}{dz'}|_a=0\\
+		\frac{dB}{dx_b}-\frac{dH}{dx'}|_b=0 \ \ \frac{dB}{dy_b}-\frac{dH}{dy'}|_b=0 \ \ \ \frac{dB}{dz_b}-\frac{dH}{dz'}|_b=0\\
+	\end{sistema}
+	\end{equation}
+	
+	\newpage \thispagestyle{empty}
+	\fbox{ \parbox{\textwidth}{
+			\textbf{Example 1:}
+			\begin{gather*}
+				\text{Minimize: } \phi(x(a),x(b)) + \int_a^b L(x,x',t)dt=\int_0^1 (x')^2 dt\\
+				\phi(x(a),x(b))=0\\
+				\text{S.T.: } x(0)=-4, \ \ \ x(1)=4, \ \ \ \psi(x(a),x(b))+\int_a^b G(x,x',t)dt=\int_0^1 tx \ dt \\
+				\text{with } \psi(x(a),x(b))=0
+				\end{gather*}
+			\begin{enumerate}
+				\item Write the constraints as equations with 0
+				\begin{equation*}
+				x(0)+4 = 0, \ \ \ x(1)-4=0
+				\end{equation*}
+				\item Introducing the auxiliary function
+				\begin{gather*}
+				B(x(a),x(b))=0-\lambda 0 -\mu_1 (x(0)+4)- \mu_2(x(1)-4) \\
+				H(x,x',\lambda,t)=L(x,x',t)-\lambda G(x,x',t)=(x')^2-\lambda t x
+				\end{gather*}
+				\item  Perform the calculation for further use
+				\begin{equation*}
+				\frac{dH}{dx}=-\lambda t \ \ \ \ \frac{dH}{dx'}= 2 x'
+				\end{equation*}
+				\item Write the system
+			\begin{equation*}
+			\begin{sistema}
+				\text{Euler Lagrange equations:}\\
+				\frac{dH}{dx}-\frac{d}{dt}\left(\frac{dH}{dx'}\right)=-\lambda t-2x''=0\\ \\
+				\text{Original boundary conditions:}\\
+				x(0)+4 = 0\\ 
+				x(1)-4=0 \\ \\
+				\text{Original Integral constraints:}\\
+				\int_0^1 tx \ dt=0 \\ \\
+				\text{Additional transversal BC}\\
+				\frac{dB}{dx_a}-\frac{dH}{dx'}|_a=\frac{dB}{dx(0)}-\frac{dH}{dx'}|_{t=0}=-\mu_1 -2x'(0) =0 \\
+				\frac{dB}{dx_b}-\frac{dH}{dx'}|_b=\frac{dB}{dx(1)}-\frac{dH}{dx'}|_{t=1}=-\mu_2 -2x'(1) =0 \\ \\
+			\end{sistema}
+		\end{equation*}
+				\item Solve the system
+				\begin{gather*}
+				\mu_1=-2x'(0) \Rightarrow \text{TRIVIALLY SATISFIED}\\
+				\mu_2=-2x'(1) \Rightarrow \text{TRIVIALLY SATISFIED}\\
+				x''=-\frac{\lambda}{2}t \rightarrow x=-\frac{\lambda}{12}t^3+c_1t+c_2\\
+				x(0)=-4=c_2 \Rightarrow c_2=-4			
+				\end{gather*}
+\end{enumerate}}}
+	\fbox{ \parbox{\textwidth}{
+			\begin{gather*}
+				x(1)=4=-\frac{\lambda}{12}+c_1+c_2=-\frac{\lambda}{12}+c_-4 \Rightarrow c_1=8+\frac{\lambda}{12}\\
+				x(t)=-\frac{\lambda}{12}t^3+\left(8+\frac{\lambda}{12}\right)t-4
+				\int_0^1tx \ dt= \\
+				 \int_0^1t \left(-\frac{\lambda}{12}t^3+\left(8+\frac{\lambda}{12}\right)t-4\right) \ dt=0 \ ... \ \\
+				\frac{\lambda }{4} \frac{1}{15}+1=0 \Rightarrow \lambda=-60
+			\end{gather*}
+			Finally, the solution is:
+			\begin{equation*}
+				x(t)=-\frac{\lambda}{12}t^3+\left(8+\frac{\lambda}{12}\right)t-4=5t^3+3t-4
+			\end{equation*}
+			
+			\textbf{Example 2:}
+			\begin{gather*}
+				\text{Minimize: } \phi(x(a),x(b)) + \int_a^b L(x,x',t)dt=x(1)+\int_0^1 tx+(x')^2 dt\\
+				\text{S.T.: } x(0)=1,  \ \ \ 1+\int_0^1 x \ dt=0, \ \ \ x(1)+\int_0^1 tx \ dt =0
+			\end{gather*} 
+		\begin{enumerate}
+				\item Write the constraints as equations with 0
+					\begin{gather*}
+				x(0)-1 = 0
+			\end{gather*}
+				\item Introducing the auxiliary function
+					\begin{gather*}
+				B(x(a),x(b))=x(1)- \lambda_1 \ 1 - \lambda_2 x(1)-\mu (x(0)-1)\\
+				H(x,x',\lambda,t)=L(x,x',t)-\lambda_1 G_1(x,x',t)-\lambda_2 G_2(x,x',t)=\\
+				=tx+(x')^2-\lambda_1x-\lambda_2tx
+			\end{gather*}
+				\item Perform the calculation for further use
+					\begin{gather*}
+				\frac{dH}{dx}=t -\lambda_1 -\lambda_2 t \ \ \ \ \frac{dH}{dx'}= 2 x'
+			\end{gather*}
+				\item  Write the system
+			\begin{gather*} 
+			\begin{sistema}
+				\text{Euler Lagrange equations:}\\
+				\frac{dH}{dx}-\frac{d}{dt}\left(\frac{dH}{dx'}\right)=t -\lambda_1 -\lambda_2 t-2x''=0\\ \\
+				\text{Original boundary conditions:}\\
+				x(0)-1 = 0\\ 
+				\text{Original Integral constraints:}\\
+				1+\int_0^1 x \ dt=0\\ 
+				x(1)+\int_0^1 tx \ dt =0\\
+				\text{Additional transversal BC}\\
+				\frac{dB}{dx_a}-\frac{dH}{dx'}|_a=\frac{dB}{dx(0)}-\frac{dH}{dx'}|_{t=0}=-\mu -2x'(0) =0  \\
+				\frac{dB}{dx_b}-\frac{dH}{dx'}|_b=\frac{dB}{dx(1)}-\frac{dH}{dx'}|_{t=1}=1- \lambda_2 +2x'(1) =0 \\ \\
+			\end{sistema}
+		\end{gather*}
+	\end{enumerate}
+	}}
+	\fbox{ \parbox{\textwidth}{
+			\begin{enumerate}\setcounter{enumi}{4}
+			\item Solve the system
+					\begin{gather*}
+				\mu=-2x'(0) \Rightarrow \text{TRIVIALLY SATISFIED}\\
+				x''=\frac{ \lambda_1 +t( \lambda_2 -1)}{2}=A+Bt \ \ \ \text{with } A=\frac{\lambda_1}{2}, B=\frac{\lambda_2-1}{2}\\
+				x=A\frac{t^2}{2}+B\frac{t^3}{2}+c_1 t+ c_2\\
+				x(0)=1=c_2 \Rightarrow c_2=1\\
+				1-\lambda_2+2x'(1)=0 \Rightarrow c1=\frac{B}{2}-A\\
+				x(t)=A t\left(\frac{t}{2}-1\right)+ B \frac{t}{2} \left(\frac{t^3}{3}+1\right)+1\\
+				\int_{0}^{1}xt / dt=-1 \rightarrow -\frac{A}{3}+\frac{7}{24}B+1=-1\\
+				\int_0^1 tx / dt =-x(1) \rightarrow \frac{A}{2}+\frac{2B}{3}-A+1=-\frac{A}{2}+\frac{2B}{3}+1\\
+			\begin{sistema}
+				A=\frac{3732}{377}\\
+				B=\frac{2983}{377}
+			\end{sistema} \Rightarrow 
+			\begin{sistema}
+				\lambda_1=\frac{7464}{377}\\
+				\lambda_2=\frac{2983}{377}
+			\end{sistema}
+		\end{gather*}
+	\end{enumerate}}}
+	
+	\newpage
+	\section{Optimal control}
+	\subsection{Boundary time problem}
+	\begin{gather*}
+		\text{Minimize } F(\stackrel{-}{x},u,p,t)=\phi(x(a),x(b),p)+\int_{a}^{b}L(\stackrel{-}{x},u,p,t)dt  \\\
+		\text{subject to: } x'=f(\stackrel{-}{x},u,p,t)\\
+		\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b(x(a),x(b),p)=0\\
+		\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \int_{a}^{b}g_k(\stackrel{-}{x},u,p,t) \ dt = l_k\\
+		\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ u \in U(t)
+	\end{gather*}
+	Names:
+	\begin{itemize}
+		\item p optimization parameter
+		\item U(t) control set
+		\item $\phi(x(a),x(b),p)$ Mayer term
+		\item $L(\stackrel{-}{x},u,p,t)$ Lagrange running cost
+		\item $\phi(x(a),x(b),p)+\int_{a}^{b}L(\stackrel{-}{x},u,p,t)dt$ Bolza term - Target of the control
+		\item $x'$=f(x,u,p,t) Dynamic system
+		\item  b(x(a),x(b),p)=0 Boundary conditions
+		\item x = $\left[ x_1 \ x_2 \ ... \ x_n  \right] $ States
+		\item u = $\left[ u_1 \ u_2 \ ... \ u_n  \right] $ Controls
+	\end{itemize}
+	Steps for the solution:\\
+	\begin{enumerate}
+		\item If the problem is formulated as a maximization problem, then it could be studied as a minimization one by changing the sign
+		\begin{gather}
+			\text{maximize F($\stackrel{-}{x}$,u,p,t)} \ \ \ \  \Rightarrow \ \ \ \ \text{minimize -F($\stackrel{-}{x}$,u,p,t)}
+		\end{gather}
+		\item Transform the integral constraint in ODE constraint. FROM NOW ON THE VARIABLE Z BEHAVES AS AN ADJOINED x
+		\begin{gather}
+			\int_{a}^{b}g_k(\stackrel{-}{x},u,p,t) \ dt = l_k \ \ \ \Rightarrow \ \ \
+			\begin{sistema}
+				z'_k=g_k(\stackrel{-}{x},u,p,t)\\
+				z_k(a)=0\\
+				z_k(b)=l_k
+			\end{sistema}
+		\end{gather}
+		\item Transform the optimization parameters in ODE constraints, this transformation does not introduce new boundary conditions
+		\begin{gather}
+			p' = 0
+		\end{gather}
+		\item Built the Hemiltonian
+		\begin{gather}
+			H(\stackrel{-}{x},p,z,\lambda, \mu,\eta,u,t)=L(\stackrel{-}{x},u,p,t)+\lambda f(\stackrel{-}{x},u,p,t)+\mu g(\stackrel{-}{x},u,p,t)+\eta 0
+		\end{gather}
+		$\eta$ refers to the constraint introduced by p
+		\item Built the function B
+		\begin{gather}
+			B(x(a),x(b),p,\omega)=\phi\left(x(a),x(b),p \right)+\omega b\left(x(a),x(b),p\right)
+		\end{gather} 
+		\item Write the BVP
+		\begin{gather}
+			\begin{sistema}
+				\text{Original ODE}\\
+				\stackrel{-}{x'}=f\left(\stackrel{-}{x},u,p,t \right)\\
+				\text{Adjoint equations (remember that also z$\in \stackrel{-}{x}$)}\\
+				\lambda_k '=-\frac{\partial H}{\partial x_k }(\stackrel{-}{x},p,\lambda,\mu,u,t)\\
+				\text{Integral constraints}\\
+				z'_k=g_k(\stackrel{-}{x},u,p,t)\\
+				z_k(a)=0\\
+				z_k(b)=l_k\\ \\
+				\text{Parameters boundary conditions}\\ 
+				\frac{\partial B}{\partial p}(x(a),x(b),p,\omega)+\int_{a}^{b}\frac{\partial H}{\partial p }(\stackrel{-}{x},p,\lambda,\mu,u,t)dt=0\\ \\
+				\text{Original Boundary conditions}\\
+				b(x(a),x(b),p)=0\\ \\
+				\text{Adjoint boundary conditions}\\
+				\frac{\partial B}{\partial x(a)}(x(a),x(b),p,\omega)+\lambda(a)=0\\
+				\frac{\partial B}{\partial x(b)}(x(a),x(b),p,\omega)-\lambda(b)=0\\ \\
+				\text{Pontryagin's maximum principle}\\
+				u(t)=\text{argmin}\left\{ \ H \left(x(t),p,\lambda(t),\mu,u,t \right) \ \right\} \ \ \ \text{with} \ \ \ u \in U
+			\end{sistema}
+		\end{gather}
+		
+		Note: for the Pontryagin's maximum principle if $x_k$ is not bounded in a (or b) , then $\lambda_k$(a)=0 (or $\lambda_k$(b)=0)
+	\end{enumerate}
+	
+	\newpage
+	\fbox{ \parbox{\textwidth}{
+			\textbf{Example 1:}\\
+			\begin{gather*}
+				maximize \ \ F(x,y,u,v) = -\left(x(1)y(0) \  + \int_{0}^{1}x(t)^2+u(t)^2 \ dt \right)\\
+				s.t. \ \ \ \ x'=u\\
+				y'=v+x\\
+				\int_{0}^{1}xy+u \ dt =2\\
+				x(0)-y(1)=1\\
+				u^2+v^2 \le 1
+			\end{gather*}
+			
+			\begin{enumerate}
+				\item Write the problem as a minimization one
+				\begin{gather*}
+					minimize \ \ F(x,y,u,v) = x(1)y(0) + \int_{0}^{1}x(t)^2+u(t)^2 \ dt \\
+					s.t. \ \ \ \ x'=u\\
+					y'=v+x\\
+					\int_{0}^{1}xy+u \ dt =2\\
+					x(0)-y(1)=1\\
+					u^2+v^2 \le 1
+				\end{gather*}
+				\item Remove the integral constraints
+				\begin{gather*}
+					\int_{0}^{1}xy+u \ dt =2 \ \ \ \Rightarrow \ \ \ \begin{sistema}
+						z'=xy+u\\
+						z(0)=0\\
+						z(1)=2
+					\end{sistema}
+				\end{gather*}
+				\item Built the Hemiltonian
+				\begin{gather*}
+					H(x,y,z,\lambda_1,\lambda_2, \mu,u,v,t)= \left( x^2+u^2 \right)+ \lambda_1 u +\lambda_2 \left( v+x \right)+ \mu \left(xy+u \right)
+				\end{gather*}
+				\item Built B
+				\begin{gather*}
+					B(x(0),y(0),z(0),x(1),y(1),z(1),\omega_1,\omega_2,\omega_3)=\\
+					x(1)y(0)+\omega_1 \left( \ x(0)-y(1)-1 \ \right)+\omega_2 \left( \ z(0)-0 \ \right)+ \omega_3 \left( \ z(1)-2 \ \right)
+				\end{gather*}
+	\end{enumerate}}}
+	
+	\fbox{ \parbox{\textwidth}{
+			\begin{enumerate}\setcounter{enumi}{4}
+				\item Built the BVP
+				\begin{gather*}
+					\begin{sistema}
+						\text{Original ODE}\\
+						x'=u\\
+						y'=v+x\\
+						\text{Adjoint equations (remember that also z$\in \stackrel{-}{x}$)}\\
+						\lambda_1 '=-\frac{\partial H}{\partial x }=-2x-\lambda_2-y\mu \\
+						\lambda_2'=-\frac{\partial H}{\partial y }=-x \mu \\
+						\mu'=-\frac{\partial H}{\partial z }=0 \\
+						\text{Integral constraints}\\
+						z'=xy+u\\
+						z(0)=0\\
+						z(1)=2\\ \\
+						\text{Original Boundary conditions}\\
+						x(0)-y(1)=1\\ \\
+						\text{Adjoint boundary conditions}\\
+						\frac{\partial B}{\partial x(0)}+\lambda_1(0)=0 \ \ \ \ \rightarrow \ \ \ \ \  \omega_1 +\lambda_1(0)=0\\
+						\frac{\partial B}{\partial y(0)}+\lambda_2(0)=0 \ \ \ \ \rightarrow \ \ \ \ \ x(1) +\lambda_2(0)=0 \\
+						\frac{\partial B}{\partial z(0)}+\mu(0)=0 \ \ \ \ \rightarrow \ \ \ \ \ \omega_2 +\mu(0)=0 \\ 
+						\frac{\partial B}{\partial x(1)}-\lambda_1(1)=0 \ \ \ \ \rightarrow \ \ \ \ \  y(0)-\lambda_1(1)=0\\
+						\frac{\partial B}{\partial y(1)}-\lambda_2(1)=0 \ \ \ \ \rightarrow \ \ \ \ \ -\omega_1 -\lambda_2(1)=0 \\
+						\frac{\partial B}{\partial z(1)}-\mu(1)=0 \ \ \ \ \rightarrow \ \ \ \ \ \omega_3 -\mu(1)=0 \\ \\
+						\text{Pontryagin's maximum principle}\\
+						\left( u(t), v(t) \right)=\text{argmin}\left\{ \ H \left(x(t),y(t),z(t),\lambda_1(t),\lambda_2(t),\mu,u,v,t \right) \ \right\}= \\
+						= \ \text{argmin}\left\{ \ x^2+u^2+\lambda_1 u + \lambda_2 (v+x) +\mu (xy+u) \ \right\}\\
+						\text{with} \ \ \ \ u^2+v^2 \le 1 					
+					\end{sistema}
+				\end{gather*}
+				Since not all the components of H depend on u or v then we can consider only:
+				\begin{gather*}
+					\text{minimize} \ \ \ \stackrel{\sim}{H} = u^2+\lambda_1 u + \lambda_2 v +\mu u\\
+					\text{s.t.}	\ \ \ \ u^2+v^2 \le 1
+				\end{gather*}
+				\item From now the problem could be solved as a constrained minimization (for example with the KKT method)
+			\end{enumerate}
+	}}
+	\newpage
+	\subsection{Free time problem}
+	\begin{gather*}
+		\text{Minimize } F(x,u,t)=\phi(x(0),x(T))+\int_{0}^{T}L(x,u,t)dt\\
+		\text{subject to: } x'=f(x,u,t)\\
+		\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ b(x(0),x(T))=0\\
+		\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ u \in U(t)
+	\end{gather*}
+	\begin{enumerate}
+		\item If the problem is formulated as a maximization problem, then it could be studied as a minimization one by changing the sign
+		\begin{gather*}
+			\text{maximize F(x,u,t)} \ \ \ \  \Rightarrow \ \ \ \ \text{minimize -F(x,u,t)}
+		\end{gather*}
+		\item Perform a change of variable
+		\begin{gather*}
+			t=sT\\
+			\stackrel{\sim}{x}(s)=x(sT)\\
+			\stackrel{\sim}{u}(s)=u(sT)\\
+			\stackrel{\sim}{x'}(s)=Tf(\stackrel{\sim}{x},\stackrel{\sim}{u},Ts)
+		\end{gather*}
+		\item The problem is now transformed in
+		\begin{gather*}
+			\text{minimize } \phi(\stackrel{\sim}{x}(0),\stackrel{\sim}{x}(1)) +\int_{0}^{1} T L(\stackrel{\sim}{x},\stackrel{\sim}{u},Ts) \ ds \\
+			\text{s.t.} \stackrel{\sim}{x'}(s)=Tf(\stackrel{\sim}{x},\stackrel{\sim}{u},Ts) \\
+			\ \ \ \ \ \ b(\stackrel{\sim}{x}(0),\stackrel{\sim}{x}(1))=0\\
+			T'(s)=0
+		\end{gather*}
+		From now on we could use the same steps for the solution of the boundary time problem. For the simplicity of the notation we will use x and u instead of  $\stackrel{\sim}{x}$ and $\stackrel{\sim}{u}$. \\
+		Note: T is now a variable and not a parameter so there is also an adjoint equation of:
+		\begin{equation*}
+			\lambda = -\frac{\partial H}{\partial T}
+		\end{equation*}
+		If a variable has a boundary constraint with T, then it must be changed as in the following example
+		\begin{gather*}
+			\int_{0}^{T}...dt \ \ \  s.t. \ \ \ \  y(T)=1 \ \ \ \ \Rightarrow \ \ \ \ \ \ 	\int_{0}^{1}...ds \ \ \  s.t. \ \ \ \ \ y(1)=1 
+		\end{gather*}
+	\end{enumerate}
+	\newpage
+	\fbox{ \parbox{\textwidth}{
+			\textbf{Example 2: Change of variable for the free time problem}
+			\begin{gather*}
+				minimize \ \ F = \int_{0}^{T}(1+t^2)u^2+y \ dt \\
+				s.t. \ \ \ \ x'=y+u\\
+				y'=xy\\
+				x(0)=0\\
+				y(T)=1
+			\end{gather*}
+			The problem could be transformed in
+			\begin{gather*}
+				minimize \ \ F = \int_{0}^{1}T\left[ (1+(Ts)^2)u^2+y \ \right] ds  \\
+				s.t. \ \ \ \ x'=T(y+u)\\
+				y'=T(xy)\\
+				x(0)=0\\
+				y(1)=1\\
+				T'(s)=0
+			\end{gather*}
+	}}
+	
+\end{document}
