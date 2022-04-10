@@ -1,0 +1,51 @@
+% !TeX spellcheck = en_EN
+
+\documentclass[a4paper,12pt]{article}
+\usepackage[a4paper]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{subcaption}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{siunitx}
+\usepackage{float}
+\usepackage{pdfpages}
+\usepackage{booktabs} 
+\usepackage{pgfpages}
+
+%for printing two page per face
+\pgfpagesuselayout{2 on 1}[a4paper,landscape] 
+\usepackage[bottom]{footmisc}
+
+\newenvironment{sistema}%
+{\left\lbrace\begin{array}{@{}l@{}}}%
+	{\end{array}\right.}
+
+\title{Mechatronic system simulation}
+
+\begin{document}
+	{ \huge
+		Mechatronic System Simulation - Solution of DAE related problems}
+	\footnote{Version 1.0 \ \ \ \today}
+	\section{REGULAR PENCIL}
+Definition: given B,C $\in R^{n\text{x}n}$, the couple (B, C) is a regular pencil if $f(\lambda)$ = det(B-$\lambda$ C) is not identically 0, or equivalently there exists $\lambda$ such that $f(\lambda) \ne 0$. \\
+	\fbox{ \parbox{\textwidth}{
+		Example:
+			\begin{gather*}
+				B =	\begin{bmatrix}
+					1 & 1 \\
+					0 & 0
+				\end{bmatrix}
+				C =	\begin{bmatrix}
+					1 & 0 \\
+					0 & 0
+				\end{bmatrix}
+			\end{gather*}
+		\begin{gather*}
+			det(B-\lambda C) = det \left( \begin{bmatrix}
+				1-\lambda & 1 \\
+				0 & 0
+			\end{bmatrix} \right) = 0 \Rightarrow \text{The pencil (B, C) is not regular}
+		\end{gather*}
+}}	
+\end{document}
